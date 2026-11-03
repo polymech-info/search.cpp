@@ -614,7 +614,7 @@ bool save_vector_file_cache(const fs::path& index_dir,
     std::error_code ec;
     fs::create_directories(index_dir, ec);
     fs::path tmp = vector_cache_path(index_dir);
-    tmp += fs::path(".tmp");
+    tmp += media::path::path_from_utf8(".tmp");
     {
         std::ofstream out(tmp, std::ios::trunc);
         if (!out)
@@ -690,7 +690,7 @@ bool save_search_manifest(const fs::path& index_dir,
     std::error_code ec;
     fs::create_directories(index_dir, ec);
     fs::path tmp = search_manifest_path(index_dir);
-    tmp += fs::path(".tmp");
+    tmp += media::path::path_from_utf8(".tmp");
     {
         std::ofstream out(tmp, std::ios::trunc);
         if (!out)

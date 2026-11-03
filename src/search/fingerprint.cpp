@@ -608,7 +608,7 @@ bool save_fingerprints(const fs::path& index_dir, const std::vector<json>& recor
     std::error_code ec;
     fs::create_directories(index_dir, ec);
     fs::path tmp = fingerprint_path(index_dir);
-    tmp += fs::path(".tmp");
+    tmp += media::path::path_from_utf8(".tmp");
     {
         std::ofstream out(tmp, std::ios::trunc);
         if (!out)
