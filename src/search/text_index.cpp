@@ -16,6 +16,7 @@
 #include <map>
 #include <set>
 #include <system_error>
+#include "string/string_utils.hpp"
 
 namespace media::search {
 namespace {
@@ -25,12 +26,7 @@ using nlohmann::json;
 
 constexpr std::uint64_t k_default_ingest_max_file_size_bytes = 256ull * 1024ull * 1024ull;
 
-std::string lower_ascii(std::string s)
-{
-    for (char& c : s)
-        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-    return s;
-}
+using media::strutil::lower_ascii;
 
 bool is_default_excluded_name(const fs::path& path)
 {

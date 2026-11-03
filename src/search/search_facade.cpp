@@ -20,16 +20,12 @@
 #include <sstream>
 #include <unordered_map>
 #include <utility>
+#include "string/string_utils.hpp"
 
 namespace media::search {
 namespace {
 
-std::string lower_ascii(std::string s)
-{
-    for (char& c : s)
-        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-    return s;
-}
+using media::strutil::lower_ascii;
 
 bool eq(std::string text, const char* ref)
 {
@@ -950,8 +946,7 @@ bool name_matches_leaf(std::string_view name, const Request& req)
     auto fold = [](std::string_view text, bool sensitive) {
         std::string out(text);
         if (!sensitive) {
-            for (char& c : out)
-                c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+            out = media::strutil::lower_ascii(std::move(out));
         }
         return out;
     };

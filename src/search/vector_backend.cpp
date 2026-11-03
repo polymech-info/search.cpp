@@ -17,6 +17,7 @@
 #include <shared_mutex>
 #include <set>
 #include <vector>
+#include "string/string_utils.hpp"
 
 namespace media::search {
 namespace {
@@ -200,8 +201,7 @@ Result index_vector(const Request& req)
         const auto slash = model_name.find_last_of("/\\");
         if (slash != std::string::npos)
             model_name.erase(0, slash + 1);
-        for (char& c : model_name)
-            c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+        model_name = media::strutil::lower_ascii(std::move(model_name));
         if (model_name.find("nomic-embed") != std::string::npos)
             store.set_embed_task("nomic");
     }

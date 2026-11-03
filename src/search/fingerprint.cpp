@@ -12,6 +12,7 @@
 #include <set>
 #include <sstream>
 #include <system_error>
+#include "string/string_utils.hpp"
 
 namespace media::search {
 namespace {
@@ -19,12 +20,7 @@ namespace {
 namespace fs = std::filesystem;
 using nlohmann::json;
 
-std::string lower_ascii(std::string value)
-{
-    for (char& ch : value)
-        ch = static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
-    return value;
-}
+using media::strutil::lower_ascii;
 
 bool is_stopword(const std::string& token)
 {

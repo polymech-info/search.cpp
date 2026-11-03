@@ -4,21 +4,15 @@
 
 #include <algorithm>
 #include <cctype>
+#include "string/string_utils.hpp"
 
 namespace media::search::presets {
 namespace {
 
-std::string to_lower_ascii(std::string s)
-{
-    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) {
-        return static_cast<char>(std::tolower(c));
-    });
-    return s;
-}
 
 std::string path_key(std::string_view path)
 {
-    return to_lower_ascii(normalize_path_utf8(path));
+    return media::strutil::lower_ascii(normalize_path_utf8(path));
 }
 
 void append_unique(std::vector<std::string>& values, const std::string& raw)
@@ -72,8 +66,8 @@ bool path_under_utf8(std::string_view path, std::string_view root)
         return true;
     if (p.size() <= r.size())
         return false;
-    const std::string pl = to_lower_ascii(p);
-    const std::string rl = to_lower_ascii(r);
+    const std::string pl = media::strutil::lower_ascii(p);
+    const std::string rl = media::strutil::lower_ascii(r);
     const char sep = media::search::host::is_remote_uri(r) ? '/' : '\\';
     return pl.size() > rl.size()
         && pl[rl.size()] == sep
@@ -90,7 +84,7 @@ bool is_rejected_search_root(
         return true;
     if (media::search::host::is_remote_uri(path))
         return false;
-    const std::string lower = to_lower_ascii(path);
+    const std::string lower = media::strutil::lower_ascii(path);
     if (reject_dist_win_x64
         && lower.find("\\dist\\win-x64") != std::string::npos) {
         return true;
