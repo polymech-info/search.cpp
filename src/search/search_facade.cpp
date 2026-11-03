@@ -1,4 +1,5 @@
 #include "search/search_facade.hpp"
+#include "json/json_utils.hpp"
 #include "fs/path_sanitizer.hpp"
 
 #include "search/fingerprint.hpp"
@@ -483,7 +484,7 @@ Result run_rg_grep(const Request& req, Backend backend, Mode mode)
             try {
                 // Parse NDJSON event.
                 const nlohmann::json ev =
-                    nlohmann::json::parse(raw, nullptr, /*exceptions=*/false);
+                    media::json::try_parse(raw);
                 if (ev.is_discarded() || !ev.is_object())
                     continue;
 
