@@ -10,7 +10,17 @@ endif()
 file(GLOB PM_SEARCH_SOURCES CONFIGURE_DEPENDS
   "${CMAKE_CURRENT_SOURCE_DIR}/src/search/*.cpp")
 
+# One factory table for the process. The chat plugin links this static lib
+# and would otherwise keep an empty copy of search/host.cpp.
+option(PM_SEARCH_HOST_SINGLETONS "Host compiles search/host.cpp once per process" OFF)
+if(PM_SEARCH_HOST_SINGLETONS)
+  list(FILTER PM_SEARCH_SOURCES EXCLUDE REGEX "search[/\\\\]host\\.cpp$")
+endif()
+
 add_library(pm-search-lib STATIC ${PM_SEARCH_SOURCES})
+if(PM_SEARCH_HOST_SINGLETONS)
+  target_compile_definitions(pm-search-lib PUBLIC PM_SEARCH_HOST_SINGLETONS=1)
+endif()
 target_include_directories(pm-search-lib PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_compile_features(pm-search-lib PUBLIC cxx_std_20)

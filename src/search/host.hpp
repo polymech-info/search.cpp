@@ -1,5 +1,6 @@
 #pragma once
 
+#include "search/api.hpp"
 #include "search/search_request.hpp"
 #include "search/vector_store.hpp"
 
@@ -140,42 +141,42 @@ using MarkdownFn = std::function<MarkdownDoc(std::string_view)>;
 using MarkdownLooksFn = std::function<bool(std::string_view)>;
 using RegisterAdaptersFn = std::function<void(SourceAdapterRegistry&)>;
 
-void set_log(LogFn fn);
-void set_run_process(RunProcessFn fn);
-void set_rg_candidates(std::function<std::vector<std::filesystem::path>()> fn);
-void set_rg_file_enabled(bool enabled);
-void set_search_files(SearchFilesFn fn);
-void set_is_remote_uri(IsRemoteFn fn);
-void set_collect_remote(CollectRemoteFn fn);
-void set_utf16_range(Utf16RangeFn fn);
-void set_load_search_folders(LoadFoldersFn fn);
-void set_open_vector_store(OpenVectorStoreFn fn);
-void set_parse_markdown(MarkdownFn fn);
-void set_markdown_looks_like(MarkdownLooksFn fn);
-void set_register_adapters(RegisterAdaptersFn fn);
+PM_SEARCH_HOST_API void set_log(LogFn fn);
+PM_SEARCH_HOST_API void set_run_process(RunProcessFn fn);
+PM_SEARCH_HOST_API void set_rg_candidates(std::function<std::vector<std::filesystem::path>()> fn);
+PM_SEARCH_HOST_API void set_rg_file_enabled(bool enabled);
+PM_SEARCH_HOST_API void set_search_files(SearchFilesFn fn);
+PM_SEARCH_HOST_API void set_is_remote_uri(IsRemoteFn fn);
+PM_SEARCH_HOST_API void set_collect_remote(CollectRemoteFn fn);
+PM_SEARCH_HOST_API void set_utf16_range(Utf16RangeFn fn);
+PM_SEARCH_HOST_API void set_load_search_folders(LoadFoldersFn fn);
+PM_SEARCH_HOST_API void set_open_vector_store(OpenVectorStoreFn fn);
+PM_SEARCH_HOST_API void set_parse_markdown(MarkdownFn fn);
+PM_SEARCH_HOST_API void set_markdown_looks_like(MarkdownLooksFn fn);
+PM_SEARCH_HOST_API void set_register_adapters(RegisterAdaptersFn fn);
 
-void log_trace(std::string message);
-void log_debug(std::string message);
-void log_info(std::string message);
-void log_warn(std::string message);
+PM_SEARCH_HOST_API void log_trace(std::string message);
+PM_SEARCH_HOST_API void log_debug(std::string message);
+PM_SEARCH_HOST_API void log_info(std::string message);
+PM_SEARCH_HOST_API void log_warn(std::string message);
 
-ProcessResult run_process(const ProcessRun& run);
-std::vector<std::filesystem::path> rg_candidates();
-bool rg_file_enabled();
-OwnResult search_own(const std::vector<std::string>& inputs, const OwnQuery& query);
-bool is_remote_uri(std::string_view uri);
-RemoteList collect_remote(std::string_view input);
-std::optional<TextRange> utf16_range(std::string_view text, std::size_t byte_start, std::size_t byte_end);
-bool load_search_folders(std::vector<std::string>& folders, std::string& error);
-std::unique_ptr<IVectorStore> open_vector_store(
+PM_SEARCH_HOST_API ProcessResult run_process(const ProcessRun& run);
+PM_SEARCH_HOST_API std::vector<std::filesystem::path> rg_candidates();
+PM_SEARCH_HOST_API bool rg_file_enabled();
+PM_SEARCH_HOST_API OwnResult search_own(const std::vector<std::string>& inputs, const OwnQuery& query);
+PM_SEARCH_HOST_API bool is_remote_uri(std::string_view uri);
+PM_SEARCH_HOST_API RemoteList collect_remote(std::string_view input);
+PM_SEARCH_HOST_API std::optional<TextRange> utf16_range(std::string_view text, std::size_t byte_start, std::size_t byte_end);
+PM_SEARCH_HOST_API bool load_search_folders(std::vector<std::string>& folders, std::string& error);
+PM_SEARCH_HOST_API std::unique_ptr<IVectorStore> open_vector_store(
     const std::filesystem::path& dir,
     const std::string& model,
     int threads,
     int gpu_layers,
     std::string& error);
-MarkdownDoc parse_markdown(std::string_view text);
-bool markdown_looks_like(std::string_view text);
-void register_adapters(SourceAdapterRegistry& registry);
+PM_SEARCH_HOST_API MarkdownDoc parse_markdown(std::string_view text);
+PM_SEARCH_HOST_API bool markdown_looks_like(std::string_view text);
+PM_SEARCH_HOST_API void register_adapters(SourceAdapterRegistry& registry);
 
 } // namespace host
 } // namespace media::search
