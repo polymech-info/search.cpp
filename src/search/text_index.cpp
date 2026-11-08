@@ -2,6 +2,8 @@
 #include "fs/path_sanitizer.hpp"
 
 #include "fs/file_extensions.hpp"
+#include "fs/fs_guard.hpp"
+#include "fs/glob_filter.hpp"
 #include "fs/glob_paths.hpp"
 #include "search/host.hpp"
 #include "search/source_adapter_registry.hpp"
@@ -26,38 +28,13 @@ using nlohmann::json;
 
 constexpr std::uint64_t k_default_ingest_max_file_size_bytes = 256ull * 1024ull * 1024ull;
 
-using media::strutil::lower_ascii;
-
 bool is_default_excluded_name(const fs::path& path)
 {
     const std::string name = media::path::path_to_utf8(path.filename());
-    if (name.empty())
-        return false;
-    if (name.front() == '.')
+    if (media::llm::glob_exclude_default_path_component(name))
         return true;
-
-    const std::string n = lower_ascii(name);
-    static const std::set<std::string> excluded = {
-        "vfs-settings.json",
-        ".git", ".svn", ".hg",
-        "node_modules", ".npm", ".yarn", ".pnp.cjs", ".pnp.loader.mjs",
-        "thumbs.db", "desktop.ini", "ehthumbs.db",
-        ".ds_store", ".appledouble", ".lsoverride", ".spotlight-v100", ".trashes",
-        ".fseventsd", ".temporaryitems", "__macosx",
-        ".vscode", ".idea", ".fleet",
-        ".env", ".env.local", ".env.production",
-        ".cache", ".turbo", ".next", ".nuxt", ".parcel-cache", ".tsbuildinfo",
-        ".angular", ".svelte-kit",
-        "__pycache__", ".venv", "venv", ".eggs", ".mypy_cache", ".pytest_cache", ".ruff_cache",
-        "target",
-        "coverage", ".nyc_output",
-        "npm-debug.log", "yarn-debug.log", "yarn-error.log",
-        ".terraform", ".vagrant", "bower_components",
-        "cmakefiles", "cmakecache.txt", "cmake_install.cmake", "cmakescripts",
-        "out", "compile_commands.json",
-        ".vs", "debug", "release", "x64", "x86", "ipch", "packages", "testresults",
-    };
-    return excluded.contains(n);
+    // Search skips dependency trees named packages. The glob list does not.
+    return media::strutil::lower_ascii(name) == "packages";
 }
 
 std::uint64_t effective_max_file_size_bytes(const Request& req)
@@ -242,6 +219,8 @@ bool dir_is_excluded(const fs::path& dir, const Request& req)
     const std::string name = media::path::path_to_utf8(dir.filename());
     if (name == ".pixlwiz" || is_default_excluded_name(dir))
         return true;
+    if (media::llm::llm_is_sensitive_path(dir))
+        return true;
     const auto& dirs = effective_exclude_dirs(req);
     return std::find(dirs.begin(), dirs.end(), name) != dirs.end();
 }
@@ -279,6 +258,8 @@ void maybe_add_text_file(const fs::path& path, const Request& req, std::vector<f
     if (!fs::is_regular_file(path, ec) || ec)
         return;
     if (is_default_excluded_name(path))
+        return;
+    if (media::llm::llm_is_sensitive_path(path))
         return;
     if (!req.include_hidden && media::path::path_to_utf8(path.filename()).starts_with("."))
         return;
