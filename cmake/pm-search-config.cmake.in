@@ -1,0 +1,12 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(pm-commons)
+
+include("${CMAKE_CURRENT_LIST_DIR}/pm-search-targets.cmake")
+
+# The archive is static and the commons link is private, so the export does
+# not record it. Consumers still need pm::commons on the final link line.
+if(TARGET pm::search)
+  set_property(TARGET pm::search APPEND PROPERTY INTERFACE_LINK_LIBRARIES pm::commons)
+endif()
