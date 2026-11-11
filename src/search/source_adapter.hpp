@@ -169,12 +169,12 @@ private:
 };
 #endif
 
-// .odt / .ods. docx/xlsx/pptx stay on OfficeSourceAdapter (officecli).
-#if defined(FEATURE_COMMAND_MARKDOWN) && FEATURE_COMMAND_MARKDOWN
+// .odt / .ods / .odp. Text comes from the office library markdown reader.
+#if defined(FEATURE_OFFICE_EXTRACTOR) && FEATURE_OFFICE_EXTRACTOR
 class OpenDocumentSourceAdapter final : public ISourceAdapter {
 public:
     const char* id() const noexcept override { return "opendocument-anydoc"; }
-    const char* name() const noexcept override { return "OpenDocument via anydoc"; }
+    const char* name() const noexcept override { return "OpenDocument"; }
     bool can_extract(const std::filesystem::path& file) const override;
     std::vector<SourceUnit> extract(const std::filesystem::path& file,
                                     std::uint64_t max_bytes = 0) override;
